@@ -1,8 +1,8 @@
+require("dotenv").config(); // ✅ Load environment variables
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const router = require("./componants/route/user");
-// const formRoutes = require("./components/formRoute");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
