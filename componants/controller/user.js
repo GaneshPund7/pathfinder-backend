@@ -116,6 +116,12 @@ const submitForm = async (req, res) => {
   try {
     const data = req.body;
 
+     const captchaVerifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET}&response=${data.captchaToken}`;
+    const response = await axios.post(captchaVerifyUrl);
+
+    if (!response.data.success) {
+      return res.status(400).json({ message: "reCAPTCHA failed. Please try again." });
+    }
     // 1️⃣ Send mail to Admin (You)
     await sendMail({
       from: process.env.EMAIL_USER,
