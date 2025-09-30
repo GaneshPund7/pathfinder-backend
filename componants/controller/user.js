@@ -294,7 +294,7 @@ const submitForm = async (req, res) => {
     // ✅ Send email in background (does not block API response)
     sendMail({
       from: process.env.EMAIL_USER,
-      replyTo: data.email,
+      // replyTo: data.email,
       to: process.env.ADMIN_EMAIL,
       subject: "New Form Submission - Career Guidance Request",
       html: `
