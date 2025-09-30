@@ -199,69 +199,6 @@
 
 
 
-// const axios = require("axios");
-// const sendMail = require("../../nodemailer");
-
-// const submitForm = async (req, res) => {
-//   try {
-//     const data = req.body;
-
-//     // ✅ Prepare URLSearchParams for Google
-//     const params = new URLSearchParams();
-//     params.append("secret", process.env.RECAPTCHA_SECRET);
-//     params.append("response", data.captchaToken);
-
-//     // ✅ Verify reCAPTCHA
-//     const response = await axios.post(
-//       "https://www.google.com/recaptcha/api/siteverify",
-//       params
-//     );
-
-//     if (!response.data.success) {
-//       return res.status(400).json({ message: "reCAPTCHA failed. Please try again." });
-//     }
-
-//     // 1️⃣ Send mail to Admin (You)
-//     await sendMail({
-//       from: process.env.EMAIL_USER,
-//       replyTo: data.email,
-//       to: process.env.ADMIN_EMAIL,
-//       subject: "New Form Submission - Career Guidance Request",
-//       html: `
-//         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-//           <h2 style="color: #2c3e50;">📩 New Career Guidance Form Submission</h2>
-//           <p>You have received a new form submission with the following details:</p>
-//           <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
-//             <tr><td><b>Full Name:</b></td><td>${data.fullName}</td></tr>
-//             <tr><td><b>Date of Birth:</b></td><td>${data.dob}</td></tr>
-//             <tr><td><b>Profession:</b></td><td>${data.profession}</td></tr>
-//             <tr><td><b>Gender:</b></td><td>${data.gender}</td></tr>
-//             <tr><td><b>Mobile No:</b></td><td>${data.phone}</td></tr>
-//             <tr><td><b>Email:</b></td><td>${data.email}</td></tr>
-//             <tr><td><b>Message:</b></td><td>${data.message}</td></tr>
-//           </table>
-//           <hr />
-//           <div style="padding: 10px; background: #f9f9f9; border-radius: 8px;">
-//             <h3 style="margin: 0;">Chris Pathfinder</h3>
-//             <p>Founder & Senior Career Counselor</p>
-//           </div>
-//         </div>
-//       `,
-//     });
- 
-
-//     res.status(200).json({ message: "Form submitted & emails sent successfully!" });
-//   } catch (error) {
-//     console.error("Form submission failed:", error.response?.data || error.message);
-//     res.status(500).json({ message: "Failed to submit form" });
-//   }
-// };
-
-// module.exports = { submitForm };
-
-
-
-
 const axios = require("axios");
 const sendMail = require("../../nodemailer");
 
@@ -281,18 +218,11 @@ const submitForm = async (req, res) => {
     );
 
     if (!response.data.success) {
-      return res
-        .status(400)
-        .json({ message: "reCAPTCHA failed. Please try again." });
+      return res.status(400).json({ message: "reCAPTCHA failed. Please try again." });
     }
 
-    // ✅ Send success response to user immediately
-    res
-      .status(200)
-      .json({ message: "Form submitted successfully! Email will be sent." });
-
-    // ✅ Send email in background (does not block API response)
-    sendMail({
+    // 1️⃣ Send mail to Admin (You)
+    await sendMail({
       from: process.env.EMAIL_USER,
       // replyTo: data.email,
       to: process.env.ADMIN_EMAIL,
@@ -317,18 +247,88 @@ const submitForm = async (req, res) => {
           </div>
         </div>
       `,
-    })
-      .then(() => console.log("✅ Email sent successfully"))
-      .catch((err) =>
-        console.error("❌ Error sending email (background):", err.message)
-      );
+    });
+ 
+
+    res.status(200).json({ message: "Form submitted & emails sent successfully!" });
   } catch (error) {
-    console.error(
-      "Form submission failed:",
-      error.response?.data || error.message
-    );
+    console.error("Form submission failed:", error.response?.data || error.message);
     res.status(500).json({ message: "Failed to submit form" });
   }
 };
 
 module.exports = { submitForm };
+
+
+
+
+// const axios = require("axios");
+// const sendMail = require("../../nodemailer");
+
+// const submitForm = async (req, res) => {
+//   try {
+//     const data = req.body;
+
+//     // ✅ Prepare URLSearchParams for Google
+//     const params = new URLSearchParams();
+//     params.append("secret", process.env.RECAPTCHA_SECRET);
+//     params.append("response", data.captchaToken);
+
+//     // ✅ Verify reCAPTCHA
+//     const response = await axios.post(
+//       "https://www.google.com/recaptcha/api/siteverify",
+//       params
+//     );
+
+//     if (!response.data.success) {
+//       return res
+//         .status(400)
+//         .json({ message: "reCAPTCHA failed. Please try again." });
+//     }
+
+//     // ✅ Send success response to user immediately
+//     res
+//       .status(200)
+//       .json({ message: "Form submitted successfully! Email will be sent." });
+
+//     // ✅ Send email in background (does not block API response)
+//     sendMail({
+//       from: process.env.EMAIL_USER,
+//       // replyTo: data.email,
+//       to: process.env.ADMIN_EMAIL,
+//       subject: "New Form Submission - Career Guidance Request",
+//       html: `
+//         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+//           <h2 style="color: #2c3e50;">📩 New Career Guidance Form Submission</h2>
+//           <p>You have received a new form submission with the following details:</p>
+//           <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+//             <tr><td><b>Full Name:</b></td><td>${data.fullName}</td></tr>
+//             <tr><td><b>Date of Birth:</b></td><td>${data.dob}</td></tr>
+//             <tr><td><b>Profession:</b></td><td>${data.profession}</td></tr>
+//             <tr><td><b>Gender:</b></td><td>${data.gender}</td></tr>
+//             <tr><td><b>Mobile No:</b></td><td>${data.phone}</td></tr>
+//             <tr><td><b>Email:</b></td><td>${data.email}</td></tr>
+//             <tr><td><b>Message:</b></td><td>${data.message}</td></tr>
+//           </table>
+//           <hr />
+//           <div style="padding: 10px; background: #f9f9f9; border-radius: 8px;">
+//             <h3 style="margin: 0;">Chris Pathfinder</h3>
+//             <p>Founder & Senior Career Counselor</p>
+//           </div>
+//         </div>
+//       `,
+//     })
+//       .then(() => console.log("✅ Email sent successfully"))
+//       .catch((err) =>
+//         console.error("❌ Error sending email (background):", err.message)
+//       );
+//   } catch (error) {
+//     console.error(
+//       "Form submission failed:",
+//       error.response?.data || error.message
+//     );
+//     res.status(500).json({ message: "Failed to submit form" });
+//   }
+// };
+
+// module.exports = { submitForm };
